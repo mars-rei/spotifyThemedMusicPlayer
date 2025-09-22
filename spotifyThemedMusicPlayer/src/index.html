@@ -4,7 +4,7 @@
   <title>mars rei radio</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/src/style.css" rel="stylesheet">
+  <link href="./output.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,7 +17,7 @@
 
       <div class="flex justify-center items-center mt-8"> 
         <div class="w-70 mx-8 aspect-square flex justify-center items-center">
-          <img src="imgs/profile.jpg" class="rounded-xs">
+          <img src="../imgs/profile.jpg" class="rounded-xs">
         </div>
       </div>
 
@@ -29,7 +29,7 @@
           my singing + ukulele covers in one place
         </p>
         <div class="flex flex-row mt-2 text-center space-x-2">
-          <img src="imgs/profile.jpg" class="rounded-full w-6 h-6">
+          <img src="../imgs/profile.jpg" class="rounded-full w-6 h-6">
           <p class="text-sm font-semibold">mars.rei</p>
         </div>
         <p class="text-faded text-sm">
@@ -40,9 +40,9 @@
       <div 
         x-data="{
           songs: [
-            {name: 'tek it', thumbnail: '', mp3: 'audio/tek it.mp3'},
-            {name: 'i\'d rather be me with you', thumbnail: '', mp3: 'audio/id rather be me with you.mp3'},
-            {name: 'snow white', thumbnail: '', mp3: 'audio/snow white.mp3'}
+            {name: 'tek it', thumbnail: '', mp3: '../audio/tek it.mp3'},
+            {name: 'i\'d rather be me with you', thumbnail: '', mp3: '../audio/id rather be me with you.mp3'},
+            {name: 'snow white', thumbnail: '', mp3: '../audio/snow white.mp3'}
           ],
           audio: null,
           currentSong: null,
@@ -95,7 +95,7 @@
       >
         <div class="flex flex-row items-center mt-2 text-[#B3B3B3] justify-between">
           <div class="space-x-5">
-            <a href="audio/all-songs.zip" download="all-songs.zip"> <!-- with the current 3 for testing purposes only -->
+            <a href="../audio/all-songs.zip" download="all-songs.zip"> <!-- with the current 3 for testing purposes only -->
               <i class="fa fa-xl fa-circle-plus"></i>
             </a>
             <i class="fa fa-lg fa-arrow-up-from-bracket"></i>
