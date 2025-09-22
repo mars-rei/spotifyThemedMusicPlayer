@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+  <title>mars rei radio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/src/style.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="scrollbar-hide md:overflow-hidden">
+
+  <div class="text-white md:hidden scrollbar-hide">
+    <div class="mx-5 pb-24 text-white">
+
+      <div class="flex justify-center items-center mt-8"> 
+        <div class="w-70 mx-8 aspect-square flex justify-center items-center">
+          <img src="imgs/profile.jpg" class="rounded-xs">
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-1">
+        <p class="text-xl font-bold">
+          mars rei radio
+        </p>
+        <p class="text-faded text-sm">
+          my singing + ukulele covers in one place
+        </p>
+        <div class="flex flex-row mt-2 text-center space-x-2">
+          <img src="imgs/profile.jpg" class="rounded-full w-6 h-6">
+          <p class="text-sm font-semibold">mars.rei</p>
+        </div>
+        <p class="text-faded text-sm">
+          duration?
+        </p>
+      </div>
+
+      <div 
+        x-data="{
+          songs: [
+            {name: 'tek it', thumbnail: '', mp3: 'audio/tek it.mp3'},
+            {name: 'i\'d rather be me with you', thumbnail: '', mp3: 'audio/id rather be me with you.mp3'},
+            {name: 'snow white', thumbnail: '', mp3: 'audio/snow white.mp3'}
+          ],
+          audio: null,
+          currentSong: null,
+          currentIndex: 0,
+          isPlaying: false,
+
+          allSongs() {
+            return this.songs;
+          },
+
+          playSong(mp3File, index = null) {
+            if (this.audio) {
+              this.audio.pause();
+            }
+            
+            if (!this.audio || this.currentSong !== mp3File) {
+              this.audio = new Audio(mp3File);
+              this.currentSong = mp3File;
+              if (index !== null) this.currentIndex = index;
+
+              this.audio.onended = () => {
+                if (this.currentIndex < this.songs.length - 1) {
+                  this.currentIndex++;
+                  this.playSong(this.songs[this.currentIndex].mp3, this.currentIndex);
+                } else {
+                  this.isPlaying = false;
+                }
+              };
+            }
+            
+            this.audio.currentTime = 0;
+            this.audio.play();
+            this.isPlaying = true;
+          },
+
+          togglePlaylist() {
+            if (!this.audio) {
+              this.currentIndex = 0;
+              this.playSong(this.songs[0].mp3, 0);
+            } else if (this.isPlaying) {
+              this.audio.pause();
+              this.isPlaying = false;
+            } else {
+              this.audio.play();
+              this.isPlaying = true;
+            }
+          }
+        }"
+        class="mt-6"
+      >
+        <div class="flex flex-row items-center mt-2 text-[#B3B3B3] justify-between">
+          <div class="space-x-5">
+            <a href="audio/all-songs.zip" download="all-songs.zip"> <!-- with the current 3 for testing purposes only -->
+              <i class="fa fa-xl fa-circle-plus"></i>
+            </a>
+            <i class="fa fa-lg fa-arrow-up-from-bracket"></i>
+          </div>
+
+          <i 
+            :class="isPlaying ? 'fa-circle-pause' : 'fa-circle-play'" 
+            class="fa fa-3x text-[#1DB954] cursor-pointer" 
+            @click="togglePlaylist()"
+          ></i>
+        </div>
+
+        <div class="mt-6">
+          <div class="space-y-2">
+            <template x-for="(song, index) in allSongs()" :key="index">
+              <div class="flex items-center justify-between">
+                <div 
+                  class="flex space-x-2 items-center cursor-pointer"
+                  @click="playSong(song.mp3)"
+                >
+                  <div class="w-14 h-14 bg-[#535353] rounded-md">
+                    <img :src="song.thumbnail" class="rounded-md">
+                  </div>
+                  <div class="flex flex-col">
+                    <p class="text-md truncate" x-text="song.name"></p>
+                    <p class="text-sm text-faded">mars.rei</p>
+                  </div>
+                </div>
+
+                <a :href="song.mp3" :download="song.name + '.mp3'">
+                  <i class="fa fa-lg fa-circle-plus cursor-pointer"></i>
+                </a>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
