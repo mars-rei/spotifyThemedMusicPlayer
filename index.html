@@ -17,12 +17,12 @@
 
       <div class="flex justify-center items-center mt-8"> 
         <div class="w-70 mx-8 aspect-square flex justify-center items-center">
-          <img src="imgs/profile.jpg" class="rounded-xs">
+          <img src="imgs/profile.jpg" class="rounded-sm">
         </div>
       </div>
 
-      <div class="mt-6 space-y-1">
-        <p class="text-xl font-bold">
+      <div class="mt-3 space-y-1">
+        <p class="text-2xl font-bold">
           mars rei radio
         </p>
         <p class="text-faded text-sm">
@@ -91,9 +91,8 @@
             }
           }
         }"
-        class="mt-6"
       >
-        <div class="flex flex-row items-center mt-2 text-[#B3B3B3] justify-between">
+        <div class="flex flex-row items-center text-[#B3B3B3] justify-between">
           <div class="space-x-5">
             <a href="audio/all-songs.zip" download="all-songs.zip"> <!-- with the current 3 for testing purposes only -->
               <i class="fa fa-xl fa-circle-plus"></i>
@@ -108,15 +107,15 @@
           ></i>
         </div>
 
-        <div class="mt-6">
-          <div class="space-y-2">
+        <div class="mt-4">
+          <div class="space-y-3">
             <template x-for="(song, index) in allSongs()" :key="index">
               <div class="flex items-center justify-between">
                 <div 
                   class="flex space-x-2 items-center cursor-pointer"
                   @click="playSong(song.mp3)"
                 >
-                  <div class="w-14 h-14 bg-[#535353] rounded-md">
+                  <div class="w-12 h-12 bg-[#535353] rounded-md">
                     <img :src="song.thumbnail" class="rounded-md">
                   </div>
                   <div class="flex flex-col">
