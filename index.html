@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body class="scrollbar-hide md:overflow-hidden">
+<body class="scrollbar-hide md:overflow-hidden" x-data="musicPlayer()">
 
   <div class="text-white md:hidden scrollbar-hide">
     <div class="mx-5 pb-24 text-white">
@@ -37,64 +37,10 @@
         </p>
       </div>
 
-      <div 
-        x-data="{
-          songs: [
-            {name: 'tek it', thumbnail: '', mp3: 'audio/tek it.mp3'},
-            {name: 'i\'d rather be me with you', thumbnail: '', mp3: 'audio/id rather be me with you.mp3'},
-            {name: 'snow white', thumbnail: '', mp3: 'audio/snow white.mp3'}
-          ],
-          audio: null,
-          currentSong: null,
-          currentIndex: 0,
-          isPlaying: false,
-
-          allSongs() {
-            return this.songs;
-          },
-
-          playSong(mp3File, index = null) {
-            if (this.audio) {
-              this.audio.pause();
-            }
-            
-            if (!this.audio || this.currentSong !== mp3File) {
-              this.audio = new Audio(mp3File);
-              this.currentSong = mp3File;
-              if (index !== null) this.currentIndex = index;
-
-              this.audio.onended = () => {
-                if (this.currentIndex < this.songs.length - 1) {
-                  this.currentIndex++;
-                  this.playSong(this.songs[this.currentIndex].mp3, this.currentIndex);
-                } else {
-                  this.isPlaying = false;
-                }
-              };
-            }
-            
-            this.audio.currentTime = 0;
-            this.audio.play();
-            this.isPlaying = true;
-          },
-
-          togglePlaylist() {
-            if (!this.audio) {
-              this.currentIndex = 0;
-              this.playSong(this.songs[0].mp3, 0);
-            } else if (this.isPlaying) {
-              this.audio.pause();
-              this.isPlaying = false;
-            } else {
-              this.audio.play();
-              this.isPlaying = true;
-            }
-          }
-        }"
-      >
-        <div class="flex flex-row items-center text-[#B3B3B3] justify-between">
+      <div>
+        <div class="flex flex-row items-center text-[#B3B3B3] justify-between mt-2">
           <div class="space-x-5">
-            <a href="audio/all-songs.zip" download="all-songs.zip"> <!-- with the current 3 for testing purposes only -->
+            <a href="audio/all-songs.zip" download="all-songs.zip">
               <i class="fa fa-xl fa-circle-plus"></i>
             </a>
             <i class="fa fa-lg fa-arrow-up-from-bracket"></i>
@@ -109,11 +55,11 @@
 
         <div class="mt-4">
           <div class="space-y-3">
-            <template x-for="(song, index) in allSongs()" :key="index">
+            <template x-for="(song, index) in songs" :key="index">
               <div class="flex items-center justify-between">
                 <div 
                   class="flex space-x-2 items-center cursor-pointer"
-                  @click="playSong(song.mp3)"
+                  @click="playSong(song.mp3, index)"
                 >
                   <div class="w-12 h-12 bg-[#535353] rounded-md">
                     <img :src="song.thumbnail" class="rounded-md">
@@ -132,9 +78,100 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
+
+  <div class="md:hidden">
+    <div class="flex w-[calc(100%-1rem)] left-2 fixed bottom-2 p-2 z-20 rounded-md bg-[#181818] items-center">
+      <div class="h-12 w-12 rounded-md bg-[#535353]"></div> 
+      <div class="flex flex-col ml-2">
+        <p class="text-xs">
+          <span x-text="audio && currentSong ? songs[currentIndex].name : 'press play or click a song to start listening!'"></span>
+          <span x-show="audio && currentSong" class="text-faded"> • mars.rei</span>
+        </p>
+        <p 
+          x-text="isPlaying ? 'you are listening to mars rei radio' : 'mars rei radio'"
+          class="text-xs text-[#1DB954]"
+        ></p>
+      </div>
+      <span 
+        :class="isPlaying ? 'fa-pause' : 'fa-play'" 
+        class="fa text-2xl ml-auto pr-4 cursor-pointer"
+        @click="togglePlaylist()"
+      ></span>
+    </div>
+
+    <div class="flex w-[calc(100%-1rem)] left-2 fixed bottom-2 z-20">        
+      <div class="flex-1 h-0.5 px-2">
+        <div class="w-full h-full bg-gray-600 rounded-full overflow-hidden">
+          <div class="h-full bg-white rounded-full relative" :style="`width: ${progress}%`"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function musicPlayer() {
+      return {
+        songs: [
+          {name: 'tek it', thumbnail: '', mp3: 'audio/tek it.mp3'},
+          {name: 'i\'d rather be me with you', thumbnail: '', mp3: 'audio/id rather be me with you.mp3'},
+          {name: 'snow white', thumbnail: '', mp3: 'audio/snow white.mp3'}
+        ],
+        audio: null,
+        currentSong: null,
+        currentIndex: 0,
+        isPlaying: false,
+
+        playSong(mp3File, index = null) {
+          if (this.audio) {
+            this.audio.pause();
+            this.audio.removeEventListener('timeupdate', this.updateTimeBar.bind(this));
+          }
+          
+          if (!this.audio || this.currentSong !== mp3File) {
+            this.audio = new Audio(mp3File);
+            this.currentSong = mp3File;
+            if (index !== null) this.currentIndex = index;
+
+            this.audio.addEventListener('timeupdate', this.updateTimeBar.bind(this));
+            
+            this.audio.onended = () => {
+              this.isPlaying = false;
+              this.progress = 0;
+              if (this.currentIndex < this.songs.length - 1) {
+                this.currentIndex++;
+                this.playSong(this.songs[this.currentIndex].mp3, this.currentIndex);
+              }
+            };
+          }
+          
+          this.audio.play();
+          this.isPlaying = true;
+        },
+
+        updateTimeBar() {
+          if (this.audio && this.audio.duration) {
+            const audioProgress = (this.audio.currentTime / this.audio.duration) * 100;
+            this.progress = audioProgress;
+          }
+        },
+
+        togglePlaylist() {
+          if (!this.audio) {
+            this.currentIndex = 0;
+            this.playSong(this.songs[0].mp3, 0);
+          } else if (this.isPlaying) {
+            this.audio.pause();
+            this.isPlaying = false;
+          } else {
+            this.audio.play();
+            this.isPlaying = true;
+          }
+        }
+      }
+    }
+  </script>
 
 </body>
 </html>
